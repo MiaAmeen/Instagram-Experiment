@@ -1,0 +1,80 @@
+2020-11-08 16:34:07.991462{
+ "dem": {
+  "m18": {
+   "Username": "dembotm18_nc",
+   "Password": "dembotm18_nc123"
+  },
+  "m25": {
+   "Username": "dembotm25_nc",
+   "Password": "dembotm25_nc123"
+  },
+  "m34": {
+   "Username": "dembotm34_nc",
+   "Password": "dembotm34_nc123"
+  },
+  "f18": {
+   "Username": "dembotf18_nc",
+   "Password": "dembotf18_nc123"
+  },
+  "f25": {
+   "Username": "dembotf25_nc",
+   "Password": "dembotf25_nc123"
+  },
+  "f34": {
+   "Username": "dembotf34_nc",
+   "Password": "dembotf34_nc123"
+  }
+ },
+ "rep": {
+  "m18": {
+   "Username": "repbotm18_nc",
+   "Password": "repbotm18_nc123"
+  },
+  "m25": {
+   "Username": "repbotm25_nc",
+   "Password": "repbotm25_nc123"
+  },
+  "m34": {
+   "Username": "repbotm34_nc",
+   "Password": "repbotm34_nc123"
+  },
+  "f18": {
+   "Username": "repbotf18_nc",
+   "Password": "repbotf18_nc123"
+  },
+  "f25": {
+   "Username": "repbotf25_nc",
+   "Password": "repbotf25_nc123"
+  },
+  "f34": {
+   "Username": "repbotf34_nc",
+   "Password": "repbotf34_nc123"
+  }
+ },
+ "neut": {
+  "m18": {
+   "Username": "neutbotm18_nc",
+   "Password": "neutbotm18_nc123"
+  },
+  "m25": {
+   "Username": "neutbotm25_nc",
+   "Password": "neutbotm25_nc123"
+  },
+  "m34": {
+   "Username": "neutbotm34_nc",
+   "Password": "neutbotm34_nc123"
+  },
+  "f18": {
+   "Username": "neutbotf18_nc",
+   "Password": "neutbotf18_nc123"
+  },
+  "f25": {
+   "Username": "neutbotf25_nc",
+   "Password": "neutbotf25_nc123"
+  },
+  "f34": {
+   "Username": "neutbotf34_nc",
+   "Password": "neutbotf34_nc123"
+  }
+ }
+}
