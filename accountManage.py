@@ -31,23 +31,14 @@ accounts= {"dembotf_nc":"dembotf_nc123", "repbotf_nc":"repbotf_nc123", "neutbot_
 for key,value in accounts.items():
     ID= key
     PASS= value
-    driver = webdriver.Chrome(path)
-    driver.get(url)
+    LOGINPG = webdriver.Chrome(path)
+    LOGINPG.get(url)
+    driver.execute_script("window.open('','_blank');")
     time.sleep(3)
-    frame = password = driver.find_element_by_xpath('/html/body')
-    frame.send_keys(Keys.ENTER)
-    #username = driver.find_element_by_name('username')
-    username = driver.find_element_by_xpath("/html/body//*[@name='username']")
-    username.send_keys(str(ID))
-    username.send_keys(Keys.ENTER)
-    #password = driver.find_element_by_name('password')
-    password = driver.find_element_by_xpath("/html/body//*[@name='password']")
-    password.send_keys(str(PASS))
-    password.send_keys(Keys.ENTER)
-
+    LOGINPG.find_element_by_xpath("//input[@name='username']").send_keys(ID)
+    LOGINPG.find_element_by_xpath("//input[@name='password']").send_keys(PASS)
+    LOGINPG.find_element_by_xpath('//*[@id="loginForm"]/div/div[3]/button/div').click()
     time.sleep(5)
-
-
 
 
 
