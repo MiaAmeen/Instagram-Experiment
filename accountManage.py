@@ -26,24 +26,33 @@ def updateString():
 
 url = 'https://www.instagram.com'
 path = "/Users/destroyerofworlds/Documents/chromedriver"
-accounts= {"dembotf_nc":"dembotf_nc123", "repbotf_nc":"repbotf_nc123", "neutbot_nc":"neutbot_nc123"}
+#accounts= {"dembotf_nc":"dembotf_nc123", "repbotf_nc":"repbotf_nc123", "neutbot_nc":"neutbot_nc123"}
+accounts= {"dembotf_nc":"dembotf_nc123"}
+script= open("IG.js").read()
+
+def newtab(ID,PASS,script):
+    LOGINPG = webdriver.Chrome(path)
+    LOGINPG.get(url)
+    time.sleep(1)
+    LOGINPG.find_element_by_xpath("//input[@name='username']").send_keys(ID)
+    LOGINPG.find_element_by_xpath("//input[@name='password']").send_keys(PASS)
+    LOGINPG.find_element_by_xpath('//*[@id="loginForm"]/div/div[3]/button/div').click()
+    time.sleep(4)
+    LOGINPG.find_element_by_xpath('//*[@id="react-root"]/section/main/div/div/div/div/button').click()
+    LOGINPG.find_element_by_xpath('/html/body/div[4]/div/div/div/div[3]/button[2]').click()
+    LOGINPG.execute_script(script)
+    print("done!")
+
 
 for key,value in accounts.items():
     ID= key
     PASS= value
-    LOGINPG = webdriver.Chrome(path)
-    LOGINPG.get(url)
-    driver.execute_script("window.open('','_blank');")
-    time.sleep(3)
-    LOGINPG.find_element_by_xpath("//input[@name='username']").send_keys(ID)
-    LOGINPG.find_element_by_xpath("//input[@name='password']").send_keys(PASS)
-    LOGINPG.find_element_by_xpath('//*[@id="loginForm"]/div/div[3]/button/div').click()
-    time.sleep(5)
+    newtab(ID,PASS,script)
 
 
 
 
 
 
-
+#chdir Documents/IG/Instagram-Experiment
 #python accountManage.py
