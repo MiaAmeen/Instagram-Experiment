@@ -20,8 +20,8 @@ function doSomething(random) {
     var h = new Date().getHours();
     var m = new Date().getMinutes();
     console.log('current time: '+h+ ":" +m+ '\n');
-    var start = 22; // start liking after this hour
-    var end = 23; // stop liking after this hour
+    var start = 15; // start liking after this hour
+    var end = 16; // stop liking after this hour
     if (h >= start && h < end) { // Between
       setTimeout(function() {doSomething(random);loop(); totlikes++ }, random);
     }
