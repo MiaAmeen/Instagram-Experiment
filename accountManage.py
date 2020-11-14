@@ -9,6 +9,7 @@ import json
 import time as Time
 from datetime import *
 import random
+import csv
 
 
 def updateString():
@@ -41,7 +42,8 @@ def newtab(ID,PASS):
     Time.sleep(1)
     LOGINPG.find_element_by_xpath("//input[@name='username']").send_keys(ID)
     LOGINPG.find_element_by_xpath("//input[@name='password']").send_keys(PASS)
-    LOGINPG.find_element_by_xpath('//*[@id="loginForm"]/div/div[3]/button/div').click()
+    LOGINPG.find_element_by_xpath("//input[@name='password']").send_keys(Keys.ENTER)
+    #LOGINPG.find_element_by_xpath('//*[@id="loginForm"]/div/div[3]/button/div').click()
     Time.sleep(4)
     LOGINPG.find_element_by_xpath('//*[@id="react-root"]/section/main/div/div/div/div/button').click()
     Time.sleep(2)
@@ -75,32 +77,37 @@ def newtab(ID,PASS):
                 poopy=False
                 break
             else:
-                LOGINPG.execute_script('arguments[0].scrollIntoView({behavior: "smooth", block: "center", inline: "nearest"});', element)
-                #height= LOGINPG.execute_script('return arguments[0].scrollHeight;', element)
-                #print(height)
-                rand= random.randint(9,12)
-                print("waiting for "+str(rand)+" seconds...")
-                Time.sleep(rand)
-                index= elements.index(element)
-                if 'more' in captions[index].text:
-                    try:
+                try:
+                    LOGINPG.execute_script('arguments[0].scrollIntoView({behavior: "smooth", block: "center", inline: "nearest"});', element)
+                    #height= LOGINPG.execute_script('return arguments[0].scrollHeight;', element)
+                    #print(height)
+                    rand= random.randint(9,12)
+                    print("waiting for "+str(rand)+" seconds...")
+                    Time.sleep(rand)
+                    index= elements.index(element)
+
+                    if 'more' in captions[index].text:
                         LOGINPG.find_element_by_css_selector('div > span._8Pl3R > span._2UvmX > button').click()
-                    except BaseException as msg:
+                    else:
+                        pass
+                    data[index]= captions[index].text
+                    element.click()
+
+                except BaseException as msg:
                         print(msg)
-                else:
-                    pass
-                data[str(index)]= captions[index].text
-                element.click()
+                        data[index]= str(msg)
+
                 totlikes+= 1
 
+
     print("time's up!\n"+"total likes:"+str(totlikes))
-    print(data)
     time.sleep(1)
 
     LOGINPG.get('https://www.instagram.com/explore/people/suggested/')
     Time.sleep(5)  #wait for follow suggestions to load!
     folPath= "div.Igw0E.rBNOH.YBx95.ybXk5._4EzTm.soMvl > button"
     totfols= 0
+
     while True:
         follows= LOGINPG.find_elements_by_css_selector(folPath)
         for follow in follows:
@@ -108,15 +115,19 @@ def newtab(ID,PASS):
                 break
             else:
                 LOGINPG.execute_script('arguments[0].scrollIntoView({behavior: "smooth", block: "center", inline: "nearest"});', follow)
-                Time.sleep((random.randint(5,8)
+                Time.sleep(random.randint(5,8))
                 follow.click()
                 totfols+= 1
 
     print("All finished! Total follows:"+ str(totfol))
 
-for key,value in accounts.items():
+    with open('data.csv', 'w') as f:
+        for key in data.keys():
+            f.write("%s,%s\n"%(key,data[key]))
+
+for key in accounts.keys():
     ID= key
-    PASS= value
+    PASS= accounts[key]
     newtab(ID,PASS)
 
 
