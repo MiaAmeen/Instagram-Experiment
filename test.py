@@ -12,6 +12,7 @@ import random
 url = 'https://www.instagram.com'
 path = "/Users/destroyerofworlds/Documents/chromedriver"
 accounts= {"dembotf_nc":"dembotf_nc123", "repbotf_nc":"repbotf_nc123", "neutbot_nc":"neutbot_nc123"}
+data= {}
 #noUseWords= ['for and nor but or yet so since although after because before when while whose that which whichever who whoever whom whomever what whatever a an the']
 #postInfo= {"rank":no, "caption": caption}
 ID= "repbotf_nc"
@@ -31,41 +32,20 @@ LOGINPG.find_element_by_css_selector('body > div.RnEpo.Yx5HN > div > div > div >
 
 likeXpath= 'section.ltpMr.Slqrh > span.fr66n > button > div > span > svg[aria-label="Like"]'
 capPath = 'div.eo2As > div.EtaWk > div > div.Igw0E.IwRSH.eGOV_._4EzTm.pjcA_ > div > span._8Pl3R'
+count= 0
 
-totlikes= 0
-data= {}
-poopy= True
-counts= 0
+while count!=5:
+    count+=1
+    caption= LOGINPG.execute_script('return document.querySelector("div.eo2As > div.EtaWk > div > div.Igw0E.IwRSH.eGOV_._4EzTm.pjcA_ > div > span._8Pl3R");')
+    if 'more' in caption.text:
+        caption.click()
+        morePath= "div.eo2As > div.EtaWk > div > div.Igw0E.IwRSH.eGOV_._4EzTm.pjcA_ > div > span._8Pl3R > span._2UvmX > button"
+        LOGINPG.find_element_by_css_selector(morePath).click()
+    else:
+        pass
+    data[count]= caption.text
+    Time.sleep(3)
 
-while poopy:
-
-    elements= LOGINPG.find_elements_by_css_selector(likeXpath)
-    captions= LOGINPG.find_elements_by_css_selector(capPath)
-
-    for element in elements:
-        if counts==3:
-            poopy=False
-            break
-        else:
-            LOGINPG.execute_script('arguments[0].scrollIntoView({behavior: "smooth", block: "center", inline: "nearest"});', element)
-            #height= LOGINPG.execute_script('return arguments[0].scrollHeight;', element)
-            #print(height)
-            rand= random.randint(9,12)
-            print("waiting for "+str(rand)+" seconds...")
-            Time.sleep(rand)
-            index= elements.index(element)
-            if 'more' in captions[index].text:
-                try:
-                    LOGINPG.find_element_by_css_selector('div > span._8Pl3R > span._2UvmX > button').click()
-                except BaseException as msg:
-                    print(msg)
-            else:
-                pass
-            data[str(index)]= captions[index].text
-            element.click()
-            counts+= 1
-
-print("time's up!\n"+"total likes:"+str(totlikes))
 print(data)
 #for element in elements:
     #LOGINPG.execute_script("window.scrollTo(0, Y)")

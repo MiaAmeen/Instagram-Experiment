@@ -4,6 +4,10 @@ import os
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
+from selenium.common.exceptions import NoSuchElementException
+from selenium.common.exceptions import StaleElementReferenceException
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions
 from selenium.webdriver import Chrome
 import json
 import time as Time
@@ -49,73 +53,83 @@ def newtab(ID,PASS):
     Time.sleep(2)
     LOGINPG.find_element_by_css_selector('body > div.RnEpo.Yx5HN > div > div > div > div.mt3GC > button.aOOlW.HoLwm').click()
 
-    likeXpath= 'section.ltpMr.Slqrh > span.fr66n > button > div > span > svg[aria-label="Like"]'
-    capPath = 'div.eo2As > div.EtaWk > div > div.Igw0E.IwRSH.eGOV_._4EzTm.pjcA_ > div > span._8Pl3R'
 
-#div > span._8Pl3R > span._2UvmX > button
-#div > span._8Pl3R > span._2UvmX > button
+
     t1= datetime.today()
     m1= t1.minute
     print("timer started.. 58 min from"+ str(t1.hour)+ ":"+ str(m1))
-    m2= int(m1) + 58 #timer set to 58 minutes
+    m2= int(m1) + 3 #timer set to 58 minutes
     if m2>= 60:
         m2-= 60
     else:
         pass
 
-    totlikes= 0
     data= {}
-    poopy= True
+    bool= True
+    count=0
+    ignored_exceptions= (NoSuchElementException,StaleElementReferenceException)
+    some_timeout= 3
 
-    while poopy:
+    likeXpath= 'section.ltpMr.Slqrh > span.fr66n > button > div > span > svg[aria-label="Like"]'
+    capPath = 'div.eo2As > div.EtaWk > div > div.Igw0E.IwRSH.eGOV_._4EzTm.pjcA_ > div > span._8Pl3R'
 
-        elements= LOGINPG.find_elements_by_css_selector(likeXpath)
-        captions= LOGINPG.find_elements_by_css_selector(capPath)
+    while bool:
 
-        for element in elements:
-            if datetime.today().minute == m2:
-                poopy=False
-                break
-            else:
-                try:
-                    LOGINPG.execute_script('arguments[0].scrollIntoView({behavior: "smooth", block: "center", inline: "nearest"});', element)
-                    #height= LOGINPG.execute_script('return arguments[0].scrollHeight;', element)
-                    #print(height)
-                    rand= random.randint(9,12)
-                    print("waiting for "+str(rand)+" seconds...")
-                    Time.sleep(rand)
-                    index= elements.index(element)
+        if datetime.today().minute == m2:
+            bool=False
+            break
+        else:
+            count+=1
+            rand= random.randint(9,12)
+            try:
+                #element= LOGINPG.find_element_by_css_selector(likeXpath)
+                element= WebDriverWait(LOGINPG, some_timeout,ignored_exceptions=ignored_exceptions).until(expected_conditions.presence_of_element_located((By.CSS_SELECTOR, likeXpath)))
+                #caption= LOGINPG.execute_script('return document.querySelector("div.eo2As > div.EtaWk > div > div.Igw0E.IwRSH.eGOV_._4EzTm.pjcA_ > div > span._8Pl3R");')
+                caption= WebDriverWait(LOGINPG, some_timeout,ignored_exceptions=ignored_exceptions).until(expected_conditions.presence_of_element_located((By.CSS_SELECTOR, capPath)))
 
-                    if 'more' in captions[index].text:
-                        LOGINPG.find_element_by_css_selector('div > span._8Pl3R > span._2UvmX > button').click()
-                    else:
-                        pass
-                    data[index]= captions[index].text
-                    element.click()
+                LOGINPG.execute_script('arguments[0].scrollIntoView({behavior: "smooth", block: "center", inline: "nearest"});', element)
+                #height= LOGINPG.execute_script('return arguments[0].scrollHeight;', element)
 
-                except BaseException as msg:
-                        print(msg)
-                        data[index]= str(msg)
+                print("waiting for "+str(rand)+" seconds...")
+                Time.sleep(rand)
 
-                totlikes+= 1
+                if 'more' in caption.text:
+                    try:
+                        morePath= "div.eo2As > div.EtaWk > div > div.Igw0E.IwRSH.eGOV_._4EzTm.pjcA_ > div > span._8Pl3R > span._2UvmX > button"
+                        more = WebDriverWait(LOGINPG, some_timeout,ignored_exceptions=ignored_exceptions).until(expected_conditions.presence_of_element_located((By.CSS_SELECTOR, morePath)))
+                        more.click() # avoid ElementClickInterceptedException
+                        #LOGINPG.find_element_by_css_selector(morePath).click()
+                    except BaseException as msg:
+                        print("caption wrong "+str(msg))
+                        data[count]= msg
+                else:
+                    pass
+
+                data[count]= caption.text
+                element.click()
+
+            except BaseException as msg:
+                    print(msg)
+                    data[count]= str(msg)
 
 
-    print("time's up!\n"+"total likes:"+str(totlikes))
-    time.sleep(1)
+    print("time's up!\n"+"total likes:"+str(count))
 
     LOGINPG.get('https://www.instagram.com/explore/people/suggested/')
     Time.sleep(5)  #wait for follow suggestions to load!
     folPath= "div.Igw0E.rBNOH.YBx95.ybXk5._4EzTm.soMvl > button"
     totfols= 0
 
-    while True:
+    bool= True
+    while bool:
         follows= LOGINPG.find_elements_by_css_selector(folPath)
         for follow in follows:
-            if totfols == 50:
+            if totfols == 5:
+                bool= False
                 break
             else:
                 LOGINPG.execute_script('arguments[0].scrollIntoView({behavior: "smooth", block: "center", inline: "nearest"});', follow)
-                Time.sleep(random.randint(5,8))
+                Time.sleep(random.randint(3,5))
                 follow.click()
                 totfols+= 1
 
@@ -124,6 +138,8 @@ def newtab(ID,PASS):
     with open('data.csv', 'w') as f:
         for key in data.keys():
             f.write("%s,%s\n"%(key,data[key]))
+
+    LOGINPG.quit()
 
 for key in accounts.keys():
     ID= key
