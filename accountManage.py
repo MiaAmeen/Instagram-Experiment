@@ -68,7 +68,7 @@ def newtab(ID,PASS):
     ignored_exceptions= (NoSuchElementException,StaleElementReferenceException)
     some_timeout= 10
 
-
+#react-root > section > main > section > div > div:nth-child(2) > div > article:nth-child(1) > div.eo2As > div.k_Q0X.NnvRN > a
     def chg(count):
         lpath = "article:nth-child("+str(count)+") > div.eo2As > section.ltpMr.Slqrh > span.fr66n > button > div > span > svg[aria-label='Like']"
         cpath= "#react-root > section > main > section > div > div:nth-child(2) > div > article:nth-child("+str(count)+") > div.eo2As > div.EtaWk > div > div.Igw0E.IwRSH.eGOV_._4EzTm.pjcA_ > div > span._8Pl3R"
@@ -147,7 +147,7 @@ for key in accounts.keys():
     PASS= accounts[key]
     newtab(ID,PASS)
 
-
+#hi
 
 
 
