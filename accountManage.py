@@ -47,18 +47,16 @@ def newtab(ID,PASS):
     LOGINPG.find_element_by_xpath("//input[@name='username']").send_keys(ID)
     LOGINPG.find_element_by_xpath("//input[@name='password']").send_keys(PASS)
     LOGINPG.find_element_by_xpath("//input[@name='password']").send_keys(Keys.ENTER)
-    #LOGINPG.find_element_by_xpath('//*[@id="loginForm"]/div/div[3]/button/div').click()
     Time.sleep(4)
     LOGINPG.find_element_by_xpath('//*[@id="react-root"]/section/main/div/div/div/div/button').click()
     Time.sleep(2)
     LOGINPG.find_element_by_css_selector('body > div.RnEpo.Yx5HN > div > div > div > div.mt3GC > button.aOOlW.HoLwm').click()
 
 
-
     t1= datetime.today()
     m1= t1.minute
-    print("timer started.. 58 min from"+ str(t1.hour)+ ":"+ str(m1))
-    m2= int(m1) + 3 #timer set to 58 minutes
+    print("timer started.. 58 min from "+ str(t1.hour)+ ":"+ str(m1))
+    m2= int(m1) + 2 #timer set to specified no of minutes
     if m2>= 60:
         m2-= 60
     else:
@@ -68,10 +66,14 @@ def newtab(ID,PASS):
     bool= True
     count=0
     ignored_exceptions= (NoSuchElementException,StaleElementReferenceException)
-    some_timeout= 3
+    some_timeout= 10
 
-    likeXpath= 'section.ltpMr.Slqrh > span.fr66n > button > div > span > svg[aria-label="Like"]'
-    capPath = 'div.eo2As > div.EtaWk > div > div.Igw0E.IwRSH.eGOV_._4EzTm.pjcA_ > div > span._8Pl3R'
+
+    def chg(count):
+        lpath = "article:nth-child("+str(count)+") > div.eo2As > section.ltpMr.Slqrh > span.fr66n > button > div > span > svg[aria-label='Like']"
+        cpath= "#react-root > section > main > section > div > div:nth-child(2) > div > article:nth-child("+str(count)+") > div.eo2As > div.EtaWk > div > div.Igw0E.IwRSH.eGOV_._4EzTm.pjcA_ > div > span._8Pl3R"
+
+        return [lpath,cpath]
 
     while bool:
 
@@ -79,13 +81,14 @@ def newtab(ID,PASS):
             bool=False
             break
         else:
-            count+=1
             rand= random.randint(9,12)
+            count+=1
+
             try:
-                #element= LOGINPG.find_element_by_css_selector(likeXpath)
+                likeXpath= chg(count)[0]
+                capPath= chg(count)[1]
                 element= WebDriverWait(LOGINPG, some_timeout,ignored_exceptions=ignored_exceptions).until(expected_conditions.presence_of_element_located((By.CSS_SELECTOR, likeXpath)))
-                #caption= LOGINPG.execute_script('return document.querySelector("div.eo2As > div.EtaWk > div > div.Igw0E.IwRSH.eGOV_._4EzTm.pjcA_ > div > span._8Pl3R");')
-                caption= WebDriverWait(LOGINPG, some_timeout,ignored_exceptions=ignored_exceptions).until(expected_conditions.presence_of_element_located((By.CSS_SELECTOR, capPath)))
+                caption= WebDriverWait(LOGINPG, some_timeout,ignored_exceptions=ignored_exceptions).until(expected_conditions.presence_of_element_located((By.CSS_SELECTOR, capPath))).text
 
                 LOGINPG.execute_script('arguments[0].scrollIntoView({behavior: "smooth", block: "center", inline: "nearest"});', element)
                 #height= LOGINPG.execute_script('return arguments[0].scrollHeight;', element)
@@ -93,24 +96,22 @@ def newtab(ID,PASS):
                 print("waiting for "+str(rand)+" seconds...")
                 Time.sleep(rand)
 
-                if 'more' in caption.text:
+                if 'more' in caption:
                     try:
-                        morePath= "div.eo2As > div.EtaWk > div > div.Igw0E.IwRSH.eGOV_._4EzTm.pjcA_ > div > span._8Pl3R > span._2UvmX > button"
-                        more = WebDriverWait(LOGINPG, some_timeout,ignored_exceptions=ignored_exceptions).until(expected_conditions.presence_of_element_located((By.CSS_SELECTOR, morePath)))
-                        more.click() # avoid ElementClickInterceptedException
-                        #LOGINPG.find_element_by_css_selector(morePath).click()
+                        morePath= "react-root > section > main > section > div > div:nth-child(2) > div > article:nth-child("+str(count)+") > div.eo2As > div.EtaWk > div > div.Igw0E.IwRSH.eGOV_._4EzTm.pjcA_ > div > span._8Pl3R > span._2UvmX > button"
+                        more = WebDriverWait(LOGINPG, some_timeout,ignored_exceptions=ignored_exceptions).until(expected_conditions.presence_of_element_located((By.CSS_SELECTOR, morePath))).click()
                     except BaseException as msg:
-                        print("caption wrong "+str(msg))
-                        data[count]= msg
+                        print("caption wrong "+msg)
+                        caption= msg
                 else:
                     pass
 
-                data[count]= caption.text
-                element.click()
-
             except BaseException as msg:
-                    print(msg)
-                    data[count]= str(msg)
+                    print("like wrong"+msg)
+                    caption+= "\n"+msg
+
+            data[count]= caption
+            element.click()
 
 
     print("time's up!\n"+"total likes:"+str(count))
@@ -133,7 +134,7 @@ def newtab(ID,PASS):
                 follow.click()
                 totfols+= 1
 
-    print("All finished! Total follows:"+ str(totfol))
+    print("All finished! Total follows:"+ str(totfols))
 
     with open('data.csv', 'w') as f:
         for key in data.keys():
