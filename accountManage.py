@@ -35,7 +35,7 @@ def updateString():
 url = 'https://www.instagram.com'
 path = "/Users/destroyerofworlds/Documents/chromedriver"
 #accounts= {"dembotf_nc":"dembotf_nc123", "repbotf_nc":"repbotf_nc123", "neutbot_nc":"neutbot_nc123"}
-accounts= {"repbotf_nc":"repbotf_nc123"}
+accounts= {"repbotf_nc":"repbotf_nc123", "neutbot_nc":"neutbot_nc123"}
 #noUseWords= ['for and nor but or yet so since although after because before when while whose that which whichever who whoever whom whomever what whatever a an the']
 #postInfo= {"rank":no, "caption": caption}
 
@@ -55,8 +55,9 @@ def newtab(ID,PASS):
 
     t1= datetime.today()
     m1= t1.minute
-    print("timer started.. 58 min from "+ str(t1.hour)+ ":"+ str(m1))
-    m2= int(m1) + 2 #timer set to specified no of minutes
+    time = 2 #timer set to specified no of minutes
+    print("timer started.. " + str(time) + " min from "+ str(t1.hour)+ ":"+ str(m1))
+    m2= int(m1) + time
     if m2>= 60:
         m2-= 60
     else:
@@ -68,12 +69,10 @@ def newtab(ID,PASS):
     ignored_exceptions= (NoSuchElementException,StaleElementReferenceException)
     some_timeout= 10
 
-#react-root > section > main > section > div > div:nth-child(2) > div > article:nth-child(1) > div.eo2As > div.k_Q0X.NnvRN > a
     def chg(count):
-        lpath = "article:nth-child("+str(count)+") > div.eo2As > section.ltpMr.Slqrh > span.fr66n > button > div > span > svg[aria-label='Like']"
-        cpath= "#react-root > section > main > section > div > div:nth-child(2) > div > article:nth-child("+str(count)+") > div.eo2As > div.EtaWk > div > div.Igw0E.IwRSH.eGOV_._4EzTm.pjcA_ > div > span._8Pl3R"
-
-        return [lpath,cpath]
+        #lpath = "article:nth-child("+str(count)+") > div.eo2As > section.ltpMr.Slqrh > span.fr66n > button > div > span > svg[aria-label='Like']"
+        hpath = "#react-root > section > main > section > div > div:nth-child(2) > div > article:nth-child("+str(count)+") > div.eo2As > div.k_Q0X.NnvRN > a"
+        return [lpath, hpath]
 
     while bool:
 
@@ -85,32 +84,28 @@ def newtab(ID,PASS):
             count+=1
 
             try:
-                likeXpath= chg(count)[0]
-                capPath= chg(count)[1]
-                element= WebDriverWait(LOGINPG, some_timeout,ignored_exceptions=ignored_exceptions).until(expected_conditions.presence_of_element_located((By.CSS_SELECTOR, likeXpath)))
-                caption= WebDriverWait(LOGINPG, some_timeout,ignored_exceptions=ignored_exceptions).until(expected_conditions.presence_of_element_located((By.CSS_SELECTOR, capPath))).text
+                #lpath= chg(count)[0]
+                lpath = 'section.ltpMr.Slqrh > span.fr66n > button > div > span > svg[aria-label="Like"]'
+                hpath= chg(count)[1]
+                error= "None"
 
+                element= WebDriverWait(LOGINPG, some_timeout,ignored_exceptions=ignored_exceptions).until(expected_conditions.presence_of_element_located((By.CSS_SELECTOR, lpath)))
                 LOGINPG.execute_script('arguments[0].scrollIntoView({behavior: "smooth", block: "center", inline: "nearest"});', element)
                 #height= LOGINPG.execute_script('return arguments[0].scrollHeight;', element)
-
-                print("waiting for "+str(rand)+" seconds...")
+                print("Waiting for " + str(rand) + " seconds...")
                 Time.sleep(rand)
-
-                if 'more' in caption:
-                    try:
-                        morePath= "react-root > section > main > section > div > div:nth-child(2) > div > article:nth-child("+str(count)+") > div.eo2As > div.EtaWk > div > div.Igw0E.IwRSH.eGOV_._4EzTm.pjcA_ > div > span._8Pl3R > span._2UvmX > button"
-                        more = WebDriverWait(LOGINPG, some_timeout,ignored_exceptions=ignored_exceptions).until(expected_conditions.presence_of_element_located((By.CSS_SELECTOR, morePath))).click()
-                    except BaseException as msg:
-                        print("caption wrong "+msg)
-                        caption= msg
-                else:
-                    pass
-
             except BaseException as msg:
-                    print("like wrong"+msg)
-                    caption+= "\n"+msg
+                    print(msg)
+                    error= "LIKE WRONG: "+str(msg)
 
-            data[count]= caption
+            try:
+                a = LOGINPG.find_element_by_css_selector(hpath)
+                caption= a.get_attribute('href')
+            except BaseException as msg:
+                    print(msg)
+                    caption= " CAP WRONG: "+str(msg)
+
+            data[count]= [caption, error]
             element.click()
 
 
@@ -142,14 +137,12 @@ def newtab(ID,PASS):
 
     LOGINPG.quit()
 
-for key in accounts.keys():
-    ID= key
-    PASS= accounts[key]
+def start():
+    ID= sys.argv[1]
+    PASS= sys.argv[2]
     newtab(ID,PASS)
 
-#hi
-
-
+start()
 
 
 #chdir Documents/IG/Instagram-Experiment
